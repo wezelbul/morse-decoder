@@ -37,8 +37,53 @@ const MORSE_TABLE = {
     '-----':  '0',
 };
 
+const MORSE_CHAR_LENGTH = 10;
+const SPLITTER = "*".repeat(MORSE_CHAR_LENGTH);
+const BIN_DOT = '10';
+const BIN_DASH = '11';
+const HUMAN_DOT  = '.';
+const HUMAN_DASH  = '-';
+
 function decode(expr) {
-    // write your solution here
+    const CHUNK_SIZE = 2;
+    let morseWords = expr.split(SPLITTER);
+    let resultWords = [];
+
+    morseWords.forEach(function (morseWord) {
+        let humanChars = [];
+        let morseChars = splitString(morseWord, MORSE_CHAR_LENGTH);
+
+        morseChars.forEach(function (morseChar) {
+            let humanMorseCode = "";
+            let index = morseChar.indexOf('1');
+            let binChars = splitString(morseChar.substring(index), CHUNK_SIZE);
+
+            binChars.forEach(function (chr) {
+                switch (chr) {
+                    case BIN_DOT:
+                        humanMorseCode += HUMAN_DOT;
+                        break;
+                    case BIN_DASH:
+                        humanMorseCode += HUMAN_DASH;
+                        break;
+                }
+            })
+
+            humanChars.push(MORSE_TABLE[humanMorseCode]);
+        })
+
+        resultWords.push(humanChars.join(''));
+    })
+
+    return resultWords.join(' ');
+}
+
+function splitString(str, chunkSize) {
+    const result = [];
+    for (let i = 0; i < str.length; i += chunkSize) {
+        result.push(str.substring(i, i + chunkSize));
+    }
+    return result;
 }
 
 module.exports = {
